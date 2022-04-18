@@ -1,0 +1,31 @@
+<x-npl::data-table.simple
+    class="ly-list-table"
+    scrollY="100"
+    name="myDataTable"
+    url="{{ url('bois/data') }}"
+    :columns="$getHeadTable()"
+    idDivPaginate="bass-right"
+   idDivInfo="bas-left"
+    selectName="bois_select"
+    selectColWidth="150px"
+    searchId="mySearch"
+    :actions="[
+        ['op'=>'Suppression','id'=>'supprimer_bois_tb',
+         'url'=>url('bois/destroyMany'),'type'=>'action','method'=>'DELETE',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Archivage','id'=>'archiver_bois_tb',
+         'url'=>url('param-compte/bois/archiverMany'),'type'=>'action',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Archivage','id'=>'desarchiver_bois_tb',
+         'url'=>url('param-compte/bois/desarchiverMany'),'type'=>'action',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Modification','id'=>'modifier_bois_tb',
+        'url'=>url('param-compte/bois'),
+        'type'=>'link','canSelect'=>'1'
+        ],
+    ]"
+
+/>

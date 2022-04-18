@@ -1,0 +1,29 @@
+<x-npl::data-table.simple
+    class="ly-list-table"
+    scrollY="100"
+    name="myDataTable"
+    url="{{ url('epaisseur_planche/data') }}"
+    :columns="$getHeadTable()"
+    dom="t"
+    selectName="epaisseur_planche_select"
+    selectColWidth="150px"
+    searchId="mySearch"
+    :actions="[
+        ['op'=>'Suppression','id'=>'supprimer_epaisseur_planche_tb',
+         'url'=>url('epaisseur_planche/destroyMany'),'type'=>'action','method'=>'DELETE',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Archivage','id'=>'archiver_epaisseur_planche_tb',
+         'url'=>url('epaisseur_planche/archiverMany'),'type'=>'action',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Archivage','id'=>'desarchiver_epaisseur_planche_tb',
+         'url'=>url('epaisseur_planche/desarchiverMany'),'type'=>'action',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Modification','id'=>'modifier_epaisseur_planche_tb',
+            'canSelect'=>'1'
+        ],
+    ]"
+
+/>

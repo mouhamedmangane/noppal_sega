@@ -1,0 +1,29 @@
+<x-npl::data-table.simple
+    class="ly-list-table"
+    scrollY="100"
+    name="myDataTable"
+    url="{{ url('/param-compte/type_depense/data') }}"
+    :columns="$getHeadTable()"
+    dom="t"
+    selectName="typedepense_select"
+    selectColWidth="150px"
+    searchId="mySearch"
+    :actions="[
+        ['op'=>'Suppression','id'=>'supprimer_type_depense_tb',
+         'url'=>url('param-compte/type_depense'),'type'=>'action','method'=>'DELETE',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Archivage','id'=>'archiver_type_depense_tb',
+         'url'=>url('param-compte/type_depense/archiverMany'),'type'=>'action',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Archivage','id'=>'desarchiver_type_depense_tb',
+         'url'=>url('param-compte/type_depense/desarchiverMany'),'type'=>'action',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Modification','id'=>'modifier_type_depense_tb',
+        'type'=>'trigger','canSelect'=>'1'
+        ],
+    ]"
+
+/>
