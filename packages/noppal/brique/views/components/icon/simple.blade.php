@@ -1,0 +1,1 @@
+<i class="material-icons  @isset($attributes['outlined']) material-icons-outlined @endisset md-{{ $taille }} ">{{ $name }}</i>

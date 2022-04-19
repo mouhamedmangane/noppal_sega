@@ -1,0 +1,36 @@
+<x-npl::data-table.simple
+    class="ly-list-table"
+    scrollY="100"
+    name="myDataTable"
+    url="{{ url('tronc/data') }}"
+    :columns="$getHeadTable()"
+    idDivPaginate="bass-right"
+    afterLoadFunction="afterLoadTronc"
+    groupByEnable="true"
+    groupBy=""
+    pageLength="20"
+    idDivInfo="bas-left"
+    selectName="tronc_select"
+    selectColWidth="150px"
+    searchId="mySearch"
+    pagingType="full"
+    :actions="[
+        ['op'=>'Suppression','id'=>'supprimer_tronc_tb',
+         'url'=>url('tronc/destroyMany'),'type'=>'action','method'=>'DELETE',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Archivage','id'=>'archiver_tronc_tb',
+         'url'=>url('param-compte/tronc/archiverMany'),'type'=>'action',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Archivage','id'=>'desarchiver_tronc_tb',
+         'url'=>url('param-compte/tronc/desarchiverMany'),'type'=>'action',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Modification','id'=>'modifier_tronc_tb',
+        'url'=>url('param-compte/tronc'),
+        'type'=>'link','canSelect'=>'1'
+        ],
+    ]"
+
+/>

@@ -1,0 +1,1 @@
+<div class="" id="{{ $attributes['id'] }}" style="border-radius:0px;"></div>

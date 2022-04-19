@@ -1,0 +1,30 @@
+<x-npl::data-table.simple
+    class="ly-list-table"
+    scrollY="100"
+    name="myDataTable"
+    url="{{ url('planche/data') }}"
+    :columns="$getHeadTable()"
+    dom="t"
+    selectName="planche_select"
+    selectColWidth="150px"
+    searchId="mySearch"
+    :actions="[
+        ['op'=>'Suppression','id'=>'supprimer_planche_tb',
+         'url'=>url('planche/destroyMany'),'type'=>'action','method'=>'DELETE',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Archivage','id'=>'archiver_planche_tb',
+         'url'=>url('planche/archiverMany'),'type'=>'action',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Archivage','id'=>'desarchiver_planche_tb',
+         'url'=>url('param-compte/planche/desarchiverMany'),'type'=>'action',
+         'canSelect'=>'*','confirm'=>true,'typeAlert'=>'modal'
+        ],
+        ['op'=>'Modification','id'=>'modifier_planche_tb',
+        'url'=>url('param-compte/planche'),
+        'type'=>'link','canSelect'=>'1'
+        ],
+    ]"
+
+/>
