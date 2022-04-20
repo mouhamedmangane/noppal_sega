@@ -56,7 +56,7 @@ class HomeController extends Controller
         $donnees['caisse_jour']=(isset($totalVenteJour->montant))?
                                 number_format($totalVenteJour->montant,0,',',' '):0;
         $donnees['nbre_troncvbsdfg ']=(isset($totalVenteJour->quantite))?
-                                number_format($totalVenteJour->quantite,0,',',' '):0;
+                                nmber_format($totalVenteJour->quantite,0,',',' '):0;
         $donnees['caisse_mois']=(isset($totalVenteMois->montant))?
                                 number_format($totalVenteMois->montant,0,',',' '):0;
         $donnees['nbre_tronc_mois']=(isset($totalVenteMois->quantite))?

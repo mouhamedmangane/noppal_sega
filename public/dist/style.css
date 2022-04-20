@@ -1,0 +1,45 @@
+.bg-tertiere{
+    background-color: #ededed;
+}
+
+.header{
+    height: 40px;
+    width: 100%;
+    line-height: 40px;
+}
+.header-title{
+    width: 200px;
+    height: 40px;
+}
+.title-app{
+    padding-left: 10px;
+}
+.header-content{
+    flex-grow: 2;
+    padding:0px 10px ;
+    border-bottom: 1px solid #dddddd;
+}
+.header-content-item{
+}
+
+
+/* Text size */
+.text-normal{
+    font-size: 0.8em;
+}
+
+
+/* form */
+.form-p-group{
+    display: flex;
+    align-items: center;
+}
+.form-p-label{
+    width: 150px;
+    display: inline-block;
+}
+.form-p-input{
+    margin:0px 10px;
+    flex-grow : 1;
+    max-width: 400px;
+}

@@ -31,6 +31,7 @@ class Param extends Component
             NavModelFactory::navBlocModel()
             ->addNavItemModel("Vente","vente","shopping_cart")
             ->addNavItemModel("Achat","achat","shopping_basket")
+            ->addNavItemModel("Fournisseur","fournisseur","shopping_basket")
             ->addNavItemModel("Depense","depense","straighten")
         )
         ->addNavBlocModel(

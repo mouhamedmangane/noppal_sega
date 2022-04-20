@@ -25,10 +25,6 @@ class CreateContactsTable extends Migration
            $table->string('fonction', 250)->nullable();
            $table->string('photo', 250)->nullable();
            $table->string('adresse', 250)->nullable();
-
-
-
-
            $table->boolean('is_client')->default(0);
            $table->boolean('is_fournisseur')->default(0);
            $table->boolean('archiver')->default(0);

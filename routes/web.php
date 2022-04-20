@@ -15,6 +15,7 @@ use App\Http\Controllers\Vente\PaiementController;
 use App\Http\Controllers\Vente\VenteController;
 use App\Http\Controllers\Achat\AchatController;
 use App\Http\Controllers\Achat\AchatTroncController;
+use App\Http\Controllers\Achat\FournisseurController;
 use App\Http\Controllers\Achat\PaiementController as AchatPaiementController;
 use App\Http\Controllers\Depense\DepenseController;
 use App\Http\Controllers\ParamCompte\TypeDepenseController;
@@ -165,7 +166,10 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('achat/many', [AchatController::class,'destroyMany']);
     Route::get('contact_prix/{id}', [PrixController::class,'getContactPrix']);
     Route::resources(['achat'=>AchatController::class]);
-
+  
+    //fournisseur
+    Route::get('fournisseur/data',[FournisseurController::class,'getData']);
+    Route::resources(['fournisseur'=>FournisseurController::class]);
     //tronc
     Route::get('depense/data',[DepenseController::class,'getData']);
     Route::get('depense/data/{filter}',[DepenseController::class,'getData']);

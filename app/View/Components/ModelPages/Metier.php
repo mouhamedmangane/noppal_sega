@@ -36,6 +36,7 @@ class Metier extends Component
             NavModelFactory::navBlocModel()
             ->addNavItemModel("Vente",url("vente"),"shopping_cart")
             ->addNavItemModel("Achat",url("achat"),"receipt")
+            ->addNavItemModel("Fournisseur",url("fournisseur"),"receipt")
             ->addNavItemModel("Depense",url("depense"),"remove_shopping_cart")
 
         )
