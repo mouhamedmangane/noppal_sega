@@ -2,12 +2,14 @@
 @if(isset($vente->id))
    @props([
         'url_form'=>url("vente/".$vente->id),
-        'method_form'=>'post'
+        'method_form'=>'post',
+        'clientidd'=>$vente->contact_id
    ])
 @else
     @props([
         'url_form'=>url("vente"),
-        'method_form'=>'post'
+        'method_form'=>'post',
+        'clientidd'=> $attributes['clientid']
     ])
 @endif
 
@@ -30,27 +32,29 @@
                                 <div class="flex-grow-1 mx-2 nmx-sm-0">
                                     <div>
                                         <div class="d-flex flex-wrap-sm">
-                                            <div class=" col-md-6 col-sm-12 p-0 my-sm-1">
-                                                <x-npl::input.select  name="client"  placeholder="Nom du client" required="false"
-                                                                  id="client" class="custom-select  w-100" style="width: 100%;"
-                                                                  :dt="$clients" :value="$vente->contact_id"  />
+                                            <div class=" col-md-6 col-sm-12 p-0 nmy-sm-1">
+                                                <x-npl::input.select3  name="client"  placeholder="Nom du client" required="false"
+                                                                  id="client" class=" " style="width: 100%;"
+                                                                  :redirect="url('contact/createwithretour/create_vente/client')" redirect_text="Nouveau Client"
+                                                                  redirect_icon="add"
+                                                                  :dt="$clients" :value="$clientidd"  />
                                              </div>
                                             <button class="btn btn-warning " style="display: none;" id="reload-btn" type="button">
                                                 <i class="material-icons">refresh</i>
                                             </button>
 
 
-                                            @if(\App\Util\Access::canAccess('vente_paye_non_livre',['c']))
+                                            {{-- @if(\App\Util\Access::canAccess('vente_paye_non_livre',['c'])) --}}
 
                                             {{-- @if(Auth::user()->role->nom=='Cassier' || Auth::user()->role->nom=='Administration') --}}
                                                 <x-npl::input.text name="montant" labelText="Identifiant" type="number" class="col-md-6  col-sm-12 nmy-sm-1"
                                                             placeholder="montant" id="montant_vente_form" />
                                             {{-- @endif --}}
-                                            @endif
+                                            {{-- @endif --}}
                                         </div>
                                         <div class="d-flex mt-1 nmy-sm-1">
-                                            <x-npl::input.text  name="nom" placeholder="nom du client" id="nom" class="" :value="$vente->nom"/>
-                                            <x-npl::input.text  name="telephone" placeholder="telephone" id="telephone" class="" :value="$vente->telephone"/>
+                                            {{-- <x-npl::input.text  name="nom" placeholder="nom du client" id="nom" class="" :value="$vente->nom"/>
+                                            <x-npl::input.text  name="telephone" placeholder="telephone" id="telephone" class="" :value="$vente->telephone"/> --}}
                                         </div>
                                     </div>
                                 </div>

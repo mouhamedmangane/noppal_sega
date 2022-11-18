@@ -2,13 +2,8 @@
 
 @section('ly-toolbar')
     <x-npl::tool-bar.bar >
-        @if(\App\Util\Access::canAccess('achat_bois',['r']))
-        <x-npl::tool-bar.link id="nouveau_achat_tb" text="Nouveau" icon="add" url="/achat/create" evidence="btn-primary"  class="ml-2"  />
-        @endif
-
-        <x-npl::tool-bar.button id="modifier_achat_tb" text="Modifier" icon="edit" disabled="disabled" :canAccess="['achat_bois',['u']]" />
-        <x-npl::tool-bar.button id="supprimer_achat_tb" text="Supprimer" icon="delete"  disabled="disabled" :canAccess="['achat_bois',['d']]" />
-        <x-npl::tool-bar.divider/>
+        <x-npl::tool-bar.link id="nouveau_achat_tb" text="Reglement" icon="receipt" url="/reglement" evidence="btn-primary"  class="ml-2"  />
+        <span class="btn btn-sm text-danger"> Les achats sont deplacées dans Reglement</span>
 
     </x-npl::tool-bar.bar>
 @endsection
@@ -31,7 +26,7 @@
                                     url('achat/data/avance')=>'Achats - Avance',
                                     'd'=>'----------------'
                                 ]+$urlFournisseur()                                         "
-                                class="mx-2" />
+                                class="mx-2 custom-select custom-select-sm" />
     <x-slot name="right">
         <x-npl::filters.search-filter id='mySearch' name="tous" dataTableId="myDataTable" />
     </x-slot>

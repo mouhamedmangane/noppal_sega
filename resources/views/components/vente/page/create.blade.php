@@ -60,7 +60,7 @@
 
 
 @section('ly-main-content')
-    <x-vente.util.create :model="$vente"/>
+    <x-vente.util.create :model="$vente" :clientid="$attributes['clientid']" />
 @endsection
 
 @section('ly-main-bot')

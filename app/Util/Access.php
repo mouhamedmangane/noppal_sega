@@ -10,8 +10,8 @@ class Access {
     public const ADMIN_ROLE_NAME= "Administration";
 
     public static function canAccess($object,$droit_names){
-        return true;
         if(Auth::user()->role->nom==self::ADMIN_ROLE_NAME){
+
                 return true;
         }
         foreach(Auth::user()->role->role_objets as $rob){

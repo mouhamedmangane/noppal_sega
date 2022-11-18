@@ -3,7 +3,8 @@
 namespace Npl\Brique\Rules\DataBase;
 
 use Illuminate\Contracts\Validation\Rule;
-use Validator;
+use Npl\Brique\Rules\PositiveRule;
+use Validator,DB;
 
 class TelephoneRule implements Rule
 {
@@ -20,18 +21,29 @@ class TelephoneRule implements Rule
 
 
     private $table;
-    private $id;
+    private $pour;
     /**
      * Create a new rule instance.
      *
+     * method: en modification ou en creation
+     * 
      * @return void
      */
-    public function __construct($table="telephones",$id=0)
+    public function __construct($table="telephones",$pour=0)
     {
+
         $this->table=$table;
-        $this->id=$id;
+        $this->pour=$pour;
         $this->code=[];
     }
+
+    // pour modification ou suppression
+
+    public function setPour($pour){
+        $this->pour=$pour;
+        return $this;
+    }
+
 
     /**
      * Determine if the validation rule passes.
@@ -42,25 +54,32 @@ class TelephoneRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        return $this->numericValidation() && $this->testUnique();
+        return $this->numericValidation($attribute,$value) && $this->testUnique($attribute,$value);
     }
     public function numericValidation($attribute, $value){
-        $validator = Validator::make([$attribute=>$value],[
-            $attribute.'.indicatif'=>'numeric',
-            $attribute.'.numero'=>'numeric',
-            $attribute.'.id'=>'numeric',
+        $test = Validator::make([$attribute=>$value],[
+            $attribute.'.indicatif'=>[new PositiveRule],
+            $attribute.'.numero'=>[new PositiveRule],
+            $attribute.'.id'=>[new PositiveRule],
 
-        ]);
-        $this->code[]=self::IS_NOT_NUMERIC;
-        return !$validator->fails();
+        ])->fails();
+        if($test) $this->code[]=self::IS_NOT_NUMERIC;
+        return !$test;
     }
 
     public function testUnique($attribute,$value){
-        $test= DB::table($this->telephone)->where('indicatif',$value->indicatif)
-        ->where('numero',$value->numero)
-        ->where('id','<>',$value->id)
-        ->exists();
-        $this->code[]=self::IS_EXIST_NUMBER;
+        if(!isset($value['numero']) || empty($value['numero']))
+            return true;
+        $test= DB::table($this->table);
+        if($value['indicatif'])
+            $test->where('indicatif',$value['indicatif']);
+        if($value['numero'])
+            $test->where('numero',$value['numero']);
+        if(isset($value['id']) && !empty($value['id']))
+            $test->where('id','<>',$value['id']);
+        $test=$test->exists();
+        //   dd($test);
+        if($test) $this->code[]=self::IS_EXIST_NUMBER;
         return !$test;
     }
 

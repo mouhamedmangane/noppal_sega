@@ -2,13 +2,13 @@
 
 @section('ly-toolbar')
     <x-npl::tool-bar.bar >
-        @if(\App\Util\Access::canAccess('depense',['r']))
+        {{-- @if(\App\Util\Access::canAccess('depense',['r']))
         <x-npl::tool-bar.link id="nouveau_depense_tb" text="Nouveau" icon="add" url="/depense/create" evidence="btn-primary"  class="ml-2"  />
-        @endif
+        @endif --}}
 
-        <x-npl::tool-bar.button id="modifier_depense_tb" text="Modifier" icon="edit" disabled="disabled" :canAccess="['depense_bois',['u']]" />
+        {{-- <x-npl::tool-bar.button id="modifier_depense_tb" text="Modifier" icon="edit" disabled="disabled" :canAccess="['depense_bois',['u']]" />
         <x-npl::tool-bar.button id="supprimer_depense_tb" text="Supprimer" icon="delete"  disabled="disabled" :canAccess="['depense_bois',['d']]" />
-        <x-npl::tool-bar.divider/>
+        <x-npl::tool-bar.divider/> --}}
         <x-npl::filters.filter :filter="$getFilter()"/>
 
     </x-npl::tool-bar.bar>

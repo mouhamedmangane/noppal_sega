@@ -15,18 +15,30 @@
         @method('PUT')
     @endif
     @csrf
+    @if($reglement->id>0)
+        <input type="hidden" name="reglement_id" value="{{$reglement->id}}">
+    @endif
     <div class="px-4 " >
         <div class="row">
             <div class=" col-lg-6 col-md-8 col-sm-12">
                     <x-npl::forms.form-table >
-                        <x-npl::forms.form-table-select name="fournisseur"  placeholder="Nom du client" required="true"
+                        @if($reglement->id)
+                            <input type="hidden" value="{{$reglement->fournisseur_id}}" name="fournisseur">
+                        @else
+                            <x-npl::forms.form-table-select name="fournisseur"  placeholder="Nom du client" required="true"
                                               id="fournisseur" class="" labelText="Fournisseur"
                                               :dt="$getFournisseur" :value="$achat->fournisseur_id"  />
-
-                        <x-npl::forms.form-table-select name="chauffeur"  placeholder="Nom du client" required="true"
-                                            id="chauffeur" class="" labelText="Chauffeur"
+                        @endif
+                        <x-npl::forms.form-table-line>
+                            <x-slot name="label">
+                                Chauffeur
+                            </x-slot>
+                            <x-npl::input.select3 name="chauffeur"  placeholder="Nom du client" required="true"
+                                            id="chauffeur" class=""
+                                            :redirect="url('contact/createwithretourjoin/'.$reglement->id.'/info/create_chauffeur/chauffeur')"
+                                             edirect_icon="add" redirect_text="Nouveau Chauffeur"
                                             :dt="$getChauffeur" :value="$achat->chauffeur_id"  />
-
+                        </x-npl::forms.form-table-item>
                         <x-npl::forms.form-table-text name="poids" :value="$achat->poids" labelText="Poids Fournisseur" type="number"
                                             placeholder="Poids donné par le fournisseur" id="poids" />
 

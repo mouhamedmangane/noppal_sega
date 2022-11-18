@@ -36,7 +36,7 @@
                                     url('vente/data/paye_non_livre')=>'Ventes Payé Non Livré',
                                     url('vente/data/all')=>'Toutes les ventes',
                                 ]"
-                                class="mx-2" />
+                                class="mx-2 custom-select sustom-select-sm" />
     <x-slot name="right">
         <x-npl::filters.search-filter id='mySearch' name="tous" dataTableId="myDataTable" />
     </x-slot>

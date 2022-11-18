@@ -102,7 +102,7 @@ class VoirVente extends Component
             ->with('className','badge-success mr-2');
         })
         ->addColumn('prix_unite',function($ligneVentes){
-            return $ligneVentes->prix_total / $ligneVentes->quantite;;
+            return $ligneVentes->prix_total / $ligneVentes->bois_produit->poids.' F';
 
         })
         ->rawColumns(['bois','produit','quantite',"prix_unite",'prix_total'])

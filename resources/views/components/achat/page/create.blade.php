@@ -1,4 +1,20 @@
 @extends('npl::layouts.ly-sans')
+@if ($reglement->id)
+    @props([
+        'titre_retour'=>" Réglement RS".$reglement->id,
+        'url_retour'=>"reglement/".$reglement->id.'/achat',
+        'type_retour'=>"id",
+        'url_prev'=>'reglement/'.$reglement->id,
+    ])
+@else
+    @props([
+        'titre_retour'=>"",
+        'url_retour'=>"",
+        'type_retour'=>"id",
+        'url_prev'=>'achat/',
+
+    ])
+@endif
 @section('ly-toolbar')
     <x-npl::tool-bar.bar >
         @if($achat->id)
@@ -6,15 +22,28 @@
         @else
             <x-npl::tool-bar.prev-button id="prev_tb"  url="/achat/"  />
         @endif
-        <x-npl::input.button-submit  id="test-button-submit"
-                                        idForm="addAchat"
-                                        idContentAlert="addAchatAlert"
-                                        class="btn btn-primary btn-sm d-flex align-items-center mr-3 "
-                                        text="Enregistrer"
-                                        hrefId="achat"
-                                        parentMessageClass="n-form-table-col-input"
-                                        elementMessageClass="form-table-feedback"
-                                        icon="save"/>
+        @if ($type_retour=="id")
+            <x-npl::input.button-submit  id="test-button-submit"
+            idForm="addAchat"
+            idContentAlert="addAchatAlert"
+            class="btn btn-primary btn-sm d-flex align-items-center mr-3 "
+            text="Enregistrer"
+            hrefId="achat"
+            parentMessageClass="n-form-table-col-input"
+            elementMessageClass="form-table-feedback"
+            icon="save"/>
+        @else
+            <x-npl::input.button-submit  id="test-button-submit"
+            idForm="addAchat"
+            idContentAlert="addAchatAlert"
+            class="btn btn-primary btn-sm d-flex align-items-center mr-3 "
+            text="Enregistrer"
+            :href="$url_retour"
+            parentMessageClass="n-form-table-col-input"
+            elementMessageClass="form-table-feedback"
+            icon="save"/>
+        @endif
+
         <x-npl::tool-bar.button id="" text="Annuler" icon="clear" evidence=""  />
 
     </x-npl::tool-bar.bar >
@@ -33,13 +62,23 @@
             <x-npl::icon.simple name="add_shopping_cart" taille="16" />
         </x-slot>
         <x-npl::breadcumb.bar style="font-size: 18px;" class="py-0">
+            @if($reglement->id)
+            <x-npl::breadcumb.item  class="lien-sp">
+                <a href="{{ url('reglement/'.$reglement->id) }}">RS-{{$reglement->id}}</a>
+            </x-npl::breadcumb.item>
+            @else
             <x-npl::breadcumb.item  class="lien-sp">
                 <a href="{{ url('achat') }}">Achat</a>
             </x-npl::breadcumb.item>
+            @endif
             <x-npl::breadcumb.item active="true">
                 {{ (isset($achat->id)    )?'VS-'.$achat->id:'Nouvelle Achat' }}
+
             </x-npl::breadcumb.item>
+
+
         </x-npl::breadcumb>
+
 
         <x-slot name="right">
             <div class="mr-4">
@@ -56,7 +95,7 @@
 
 
 @section('ly-main-content')
-    <x-achat.util.create :model="$achat" />
+    <x-achat.util.create :model="$achat" :reglement="$reglement" />
 @endsection
 
 @section('ly-main-bot')

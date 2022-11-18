@@ -15,14 +15,18 @@
 
 
     <div class="mt-1 mb-1">
-        <h4>Global Accompte</h4>
+        <h4>Global </h4>
         <div class="row mt-2" >
+                <div class="col-md-4 col-sm-12">
+                    <x-generic.dashboard.cadre2 title="Etat Caisse" :valeur="$donnees['etat_caisse']" :nombre="$donnees['nbre_accompte']" icon="money-bill-wave" couleur="l-bg-white"/>
+                </div>
                 <div class="col-md-4 col-sm-12">
                     <x-generic.dashboard.cadre2 title="Accompte" :valeur="$donnees['dette']" :nombre="$donnees['nbre_accompte']" icon="money-bill-wave" couleur="l-bg-orange"/>
                 </div>
                 <div class="col-md-4 col-sm-12">
                     <x-generic.dashboard.cadre2 title="Payé non Livré" :valeur="$donnees['paye_non_livre']" :nombre="$donnees['nbre_accompte']" icon="info" couleur="l-bg-cyan"/>
                 </div>
+
         </div>
     </div>
 
@@ -85,7 +89,9 @@
             <div class="row my-5">
                 <div class="col-md-12  d-flex justify-content-center ">
                     <div class="chart-900 chart-sm" style="">
-                        <canvas id="myChart"  height="200" width="400"></canvas>
+                        <x-npl::charts.chart type="line" id="myChart" xAxisKey="jour" yAxisKey="montant"
+                                            :labels="$list_jour" :datas="$evolutionVente" />
+
                     </div>
                 </div>
             </div>
@@ -189,46 +195,7 @@
         $('.ly-toolbar').css('min-height','0px');
         $('.ly-toolbar').css('max-height','0px');
 
-var ctx = document.getElementById('myChart');
-var myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: @json($list_jour),
-        datasets: [{
-            label: 'Evolution des vente au cour du mois',
-            data: @json($evolutionVente),
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            },
 
-        },
-        parsing: {
-                xAxisKey: 'jour',
-                yAxisKey: 'montant'
-            }
-    }
-});
 
 
 //

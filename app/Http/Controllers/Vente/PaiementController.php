@@ -7,6 +7,7 @@ use App\ModelHaut\ContactHaut;
 use App\ModelHaut\VenteHaut;
 use App\Models\LignePaiement;
 use App\Models\LigneVente;
+use App\Models\Transaction;
 use App\Models\Vente;
 use App\Util\Access;
 use Illuminate\Http\Request;
@@ -39,13 +40,20 @@ class PaiementController extends Controller
             return response()->json(Validation::validate($validator));
         }
         else{
-            $vente=LignePaiement::where('id',$request->id)->first()->vente;
+            $l=LignePaiement::where('id',$request->id)->first();
+            $vente=$l->vente;
+            //suppression transaction
+         //    if($vente->transaction_id)
+
+            if($l->transaction_id);
+              $trans= Transaction::find($l->transaction_id)->delete();
+                //DB::table('transactions')->where('id',$vente->transaction_id)->delete();
             $res=DeleteRow::one('ligne_paiements',$request->id);
             VenteHaut::updateEtatVente($vente);
             $res['montant_restant']=$vente->sumRestant();
             $res['etat']=$vente->etat;
             ContactHaut::updateCompte($vente->contact_id);
-
+            DB::commit();
             return response()->json($res);
 
         }
@@ -80,7 +88,7 @@ class PaiementController extends Controller
             if($request->somme < round($vente->sumRestant())){
                 if((!$vente->client) || empty($vente->client->ncni_photo_1) || empty($vente->client->ncni_photo_1) ){
                     $validator->errors()->add(
-                    '   client', "Les photos de la carte du client no=e sont pas rensoignées"
+                    '   client', "Les photos de la carte du client ne sont pas rensoignées"
                     );
 
                 }
@@ -100,17 +108,19 @@ class PaiementController extends Controller
                 if($id){
                     $lignePaiement=LignePaiement::where('id',$id)->first();
                     $dataBaseMethod='update';
+                    $dejaCreateTransaction=true;
                 }else{
                     $lignePaiement=new LignePaiement();
                     $lignePaiement->vente_id=$request->vente_id;
                     $dataBaseMethod='save';
+                    $dejaCreateTransaction=false;
                 }
 
                 $lignePaiement->somme=$request->somme;
                 $vente=Vente::where('id',$lignePaiement->vente_id)->first();
                 DoneByUser::inject($lignePaiement);
 
-                $lignePaiement->$dataBaseMethod();
+                $lignePaiement->save($dejaCreateTransaction);
                 VenteHaut::updateEtatVente($vente);
                 ContactHaut::updateCompte($vente->contact_id);
 

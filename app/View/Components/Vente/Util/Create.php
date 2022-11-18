@@ -35,10 +35,12 @@ class Create extends Component
             foreach ($contacts as $key => $value) {
                 $telephones= Telephone::where('contact_id',$value->id)->get();
                 if(count($telephones)>0){
-                    $text=NplStringFormat::telephone($telephones[0]->numero.'',$telephones[0]->indicatif.'');
+                    // $text=NplStringFormat::telephone($telephones[0]->numero.'',$telephones[0]->indicatif.'');
+                    $text=$telephones[0]->indicatif.$telephones[0]->numero;
                 }
                 if(count($telephones)>1){
-                    $text.=' / '.NplStringFormat::telephone($telephones[1]->numero.'',$telephones[1]->indicatif.'');
+                    // $text.=' / '.NplStringFormat::telephone($telephones[1]->numero.'',$telephones[1]->indicatif.'');
+                    $text.=' / '.$telephones[0]->indicatif.$telephones[0]->numero;
                 }
                 $clients[$value->id]=$value->nom.' / '.$text;
             }

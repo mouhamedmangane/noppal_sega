@@ -3,6 +3,12 @@
     @if(isset($src) && !empty($src))
         <x-npl::images.small :src="$src" />
     @endif
-    <span class="d-inline-block ml-1">{{ $text }}</span> 
+    @if(isset($icon) && !empty($icon))
+        <i class="material-icons md-14">{{ $icon }}</i>
+    @endif
+    @if(isset($text) && !empty($text))
+        <span class="d-inline-block ml-1">{{ $text }}</span> 
+
+    @endif
 
 </a>

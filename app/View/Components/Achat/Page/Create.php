@@ -6,7 +6,7 @@ use Illuminate\View\Component;
 
 class Create extends Component
 {
-    public $achat;
+    public $achat,$reglement;
     public
            $total_paiement_info="0 ",
            $total_frais_info='0',
@@ -16,9 +16,10 @@ class Create extends Component
      *
      * @return void
      */
-    public function __construct($model)
+    public function __construct($model,$reglement)
     {
         $this->achat=$model;
+        $this->reglement=$reglement;
         if($model->id){
             $this->total_paiement_info=$model->totalPaiement();
             $this->total_frais_info=$model->totalFrais();

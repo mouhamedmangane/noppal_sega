@@ -14,10 +14,10 @@ class RoleController extends Controller
 {
 
     public function __construct(){
-        // $this->middleware('auth');
-        // $this->middleware('droit:bois,r')->only('index','getData');
-        // $this->middleware('droit:bois,c')->only('store','create');
-        // $this->middleware('droit:bois,u')->only('update','archiverMany','desarchiverMany','archiver','desarchiver','destroy');
+        $this->middleware('auth');
+        $this->middleware('droit:role,r')->only('index','getData');
+        $this->middleware('droit:role,c')->only('store','create');
+        $this->middleware('droit:role,u')->only('update','archiverMany','desarchiverMany','archiver','desarchiver','destroy');
 
     }
     /**

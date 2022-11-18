@@ -3,16 +3,14 @@
 <x-npl::tool-bar.bar >
 
    <x-npl::tool-bar.prev-button id="prev_tb"  url="/achat/"  />
+    <x-npl::tool-bar.link id="tronc_achat_tb" text="Tronc" icon="post_add" :url="url('achat/tronc/'.$achat->id)" evidence="btn-primary" :canAccess="['tronc',['r']]" />
 
-    <x-npl::tool-bar.link id="nouveau_achat_tb" text="Nouveau" icon="add" url="/achat/create" evidence="btn-primary" :canAccess="['achat_bois',['c']]" />
-    <x-npl::tool-bar.link id="modifier_achat_tb" text="Modifier" icon="edit" :url="url('achat/'.$achat->id.'/edit')" :canAccess="['achat_bois',['u']]" />
-    <x-npl::tool-bar.button id="supprimer_achat_tb" text="Supprimer" icon="delete"  disabled="disabled" :canAccess="['achat_bois',['d']]" />
-    <x-npl::tool-bar.divider/>
-    <x-npl::tool-bar.link id="tronc_achat_tb" text="Tronc" icon="post_add" :url="url('achat/tronc/'.$achat->id)" evidence="btn-primary" :canAccess="['achat_bois',['c']]" />
-    <x-npl::tool-bar.button-modal id="add_py_achat_tb" text="Ajouter Paiement" icon="add_shopping_cart" target="modal_new_ligne_paiement"  evidence="btn-success" :canAccess="['encaissement',['c']]"  :disabled="$achat->isComplete()"/>
-    <x-npl::tool-bar.button-modal id="add_fre_achat_tb" text="Ajouter Frais" icon="add_shopping_cart" target="modal_new_ligne_paiement"  evidence="btn-warning" :canAccess="['encaissement',['c']]"  :disabled="$achat->isComplete()" />
+    {{-- <x-npl::tool-bar.link id="nouveau_achat_tb" text="Nouveau" icon="add" url="/achat/create" evidence="btn-primary" :canAccess="['achat_bois',['c']]" /> --}}
+    <x-npl::tool-bar.link id="modifier_achat_tb" text="Modifier" icon="edit" :url="url('achat/'.$achat->id.'/edit')" :canAccess="['reglement_achat',['u']]" />
+    {{-- <x-npl::tool-bar.button id="supprimer_achat_tb" text="Supprimer" icon="delete"  disabled="disabled" :canAccess="['achat_bois',['d']]" /> --}}
+    {{-- <x-npl::tool-bar.button-modal id="add_py_achat_tb" text="Ajouter Paiement" icon="add_shopping_cart" target="modal_new_ligne_paiement"  evidence="btn-success" :canAccess="['encaissement',['c']]"  :disabled="$achat->isComplete()"/>
+    <x-npl::tool-bar.button-modal id="add_fre_achat_tb" text="Ajouter Frais" icon="add_shopping_cart" target="modal_new_ligne_paiement"  evidence="btn-warning" :canAccess="['encaissement',['c']]"  :disabled="$achat->isComplete()" /> --}}
 
-    <x-npl::tool-bar.divider/>
     <x-npl::tool-bar.button id="imprimer_achat_tb" text="Imprimer" icon="print"  />
 
         {{-- <x-npl::tool-bar.ajax :url="url('achat/preter/'.$achat->id)" method='get'
@@ -31,6 +29,11 @@
             <x-npl::icon.simple name="point_of_sale" taille="40" />
         </x-slot>
         <x-npl::breadcumb.bar style="font-size: 18px;" class="py-0">
+            @if($achat->reglement)
+            <x-npl::breadcumb.item  class="lien-sp">
+                <a href="{{ url('reglement/'.$achat->reglement->id) }}">RS-{{$achat->reglement->id}}</a>
+            </x-npl::breadcumb.item>
+            @endif
             <x-npl::breadcumb.item  class="lien-sp">
                 <a href="{{ url('achat/') }}">Achats</a>
             </x-npl::breadcumb.item>
@@ -43,8 +46,9 @@
         <x-slot name="right">
             <div class="mr-4 m-sm-0 mx-sm-0 overflow-x-sm-auto">
                 <x-npl::infos.info-list>
-                    <x-npl::infos.info-item title="Restant Paiement" :value="$restant_info.' FCFA'" icon="assignment_turned_in"  :couleur="$couleur_restant_info" id_value="restant_info"/>
-                    <x-npl::infos.info-item title="Prix Revient" :value="$total_prix_revient_info.' FCFA'" icon="assignment_turned_in" couleur="danger" id_value="total_paiement_info"/>
+                    {{-- <x-npl::infos.info-item title="Restant Paiement" :value="$restant_info.' FCFA'" icon="assignment_turned_in"  :couleur="$couleur_restant_info" id_value="restant_info"/> --}}
+                    {{-- <x-npl::infos.info-item title="Prix Revient" :value="$total_prix_revient_info.' FCFA'" icon="assignment_turned_in" couleur="danger" id_value="total_paiement_info"/> --}}
+                    <x-npl::infos.info-item title="Prix" :value="$total_prix_revient_info.' FCFA'" icon="assignment_turned_in" couleur="danger" id_value="total_paiement_info"/>
                     <x-npl::infos.info-item title="Total Vente " :value="$total_vente_info.' FCFA'" icon="assignment_turned_in" couleur="success" id_value="total_vente_info"/>
                     <x-npl::infos.info-item title="Vendu / Total kg" :value="$total_kl_info.' KG'" icon="assignment_turned_in"  id_value="m_total_kg"/>
                 </x-npl::infos.info-list>
@@ -55,7 +59,7 @@
 @endsection
 
 @section('ly-alert')
-<div class="" id="addAchatAlert" style="position: sticky;top:43px;border-radius:0px;"></div>
+<div class="" id="addAchatAlert" style="position: sticky;top:43px;border-radius:0px;margin-bottom:0px;"></div>
 @endsection
 
 

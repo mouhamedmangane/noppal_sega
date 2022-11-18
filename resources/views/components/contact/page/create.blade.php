@@ -1,22 +1,35 @@
 @extends('npl::layouts.ly')
 
-@if($vente)
-    @props(['url_vente'=>url('vente/'.$vente->id)])
+
+@if(!empty($retour)>0)
+    @if($retour=='vente')
+        @props(['url'=>url('vente/'.$vente->id)])
+    @elseif($retour=='create_vente')
+        @props(['url'=>url('vente/create/client')])
+    @elseif($retour=='create_chauffeur')
+        @props(['url'=>url('achat/createwithreglement/'.$joinId.'/chauffeur')])
+    @elseif($retour=='reglement')
+        @props(['url'=>url('reglement/fournisseur')])
+    @endif
+@else
+    @props(['url'=>url('contact')])
 @endif
+
 @section('ly-toolbar')
     <x-npl::tool-bar.bar class="">
-        @if($vente)
+        @if($retourid==false)
             <x-npl::tool-bar.prev-button id="prev_tb" :url="$url_vente"/>
-            <x-npl::input.button-submit id="submit_produit_tb"
-                                       idForm="create_contact_form"
-                                       idContentAlert="listContactAlert"
-                                       class="btn btn-primary btn-sm d-flex align-items-center mr-3"
-                                       text="Enregistrer"
-                                       :href="$url_vente"
-                                       parentMessageClass=""
-                                       elementMessageClass=""
-                                       :isReset="false"
-                                       icon="save"/>
+                <x-npl::input.button-submit id="submit_produit_tb"
+                    idForm="create_contact_form"
+                    idContentAlert="listContactAlert"
+                    class="btn btn-primary btn-sm d-flex align-items-center mr-3"
+                    text="Enregistrer"
+                    :href="$url"
+                    parentMessageClass=""
+                    elementMessageClass=""
+                    :isReset="false"
+                    icon="save"/>
+
         @else
             <x-npl::tool-bar.prev-button id="prev_tb" :url="url('contact')"/>
             <x-npl::input.button-submit id="submit_produit_tb"
@@ -24,7 +37,7 @@
                                        idContentAlert="listContactAlert"
                                        class="btn btn-primary btn-sm d-flex align-items-center mr-3"
                                        text="Enregistrer"
-                                       :hrefId="url('contact')"
+                                       :hrefId="$url"
                                        parentMessageClass=""
                                        elementMessageClass=""
                                        :isReset="false"
@@ -64,8 +77,16 @@
             </x-npl::breadcumb.item>
             <x-npl::breadcumb.item active="true">
                 {{ ($contact->id)?$contact->nom:'Nouveau Contact' }}
-                @if ($vente)
-                    <x-npl::bagde.badge :text="'vent VS-'.$vente->id" class="badge-success" />
+                @if(!empty($retour))
+                    @if ($retour=='vente')
+                        <x-npl::bagde.badge :text="'vent VS-'.$vente->id" class="badge-success" />
+                    @elseif ($retour=='create_vente')
+                        <x-npl::bagde.badge text="Nouvelle Vente" class="badge-success" />
+                    @elseif ($retour=='create_chauffeur')
+                        <x-npl::bagde.badge text="Nouveau Chauffeur" class="badge-danger" />
+                    @elseif ($retour=='reglement')
+                        <x-npl::bagde.badge text="Nouveau Fournisseur" class="badge-warning" />
+                    @endif
                 @endif
             </x-npl::breadcumb.item>
         </x-npl::breadcumb>

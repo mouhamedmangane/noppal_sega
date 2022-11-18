@@ -44,6 +44,7 @@
   <script>
       $(function(){
         let idForm="#{{ $attributes['idForm'] }}";
+        let myAlert="#{{ $id }}__alert";
         // alert('ok');
 
         $('#{{ $attributes['idForm'] }}').on('submit',function(e){
@@ -139,6 +140,12 @@
                   $(idAlert).delay(2000).fadeOut(500);
             }
         }
+
+        $('#{{ $id }}').on('hidden.bs.modal', function (e) {
+            $(myAlert).alert('close');
+
+
+        });
 
 
       });

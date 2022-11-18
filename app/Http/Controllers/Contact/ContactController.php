@@ -161,9 +161,12 @@ class ContactController extends Controller
                         ->with('classStyle','bg-success').' libre';
                 })
                 ->addColumn("nom",function($contact){
-                    return view('npl::components.links.simple')
-                    ->with('src',asset("images/contacts/".$contact->photo))
-                    ->with('url',url("contact/".$contact->id))
+                    $view= view('npl::components.links.simple');
+                    if($contact->photo && !empty($contact->photo))
+                        $view->with('src',asset("images/contacts/".$contact->photo));
+                    else
+                        $view->with('icon','person');
+                    return $view->with('url',url("contact/".$contact->id))
                     ->with('text',$contact->nom)
                     ->with('class','lien-sp');
                 })
@@ -221,14 +224,32 @@ class ContactController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        $contact=new Contact;
-        $vente=null;
-        return view("pages.contact.create",compact('contact','vente'));
-    }
+        return $this->createWithJoin($request,0,"","",'','');
 
-    public function createWith(Request $resuest,$vente_id,$nom,$tel="")
+    }
+    public function createWith(Request $request,$retour,$fonction,$nom="",$tel="",$idJoin=0)
+    {
+        return $this->createWithJoin($request,0,$retour,$fonction,$nom,$tel);
+    }
+    public function createWithJoin(Request $request,$idJoin=0,$retour,$fonction,$nom="",$tel="")
+    {
+        $vente=null;
+        $contact=new Contact;
+        $contact->nom=trim($nom);
+        $tele=new Telephone;
+        $tele->numero=trim($tel);
+        $contact->telephones->add($tele);
+        if($fonction=='client')$contact->is_client=1;
+        else if($fonction=='fournisseur') $contact->is_fournisseur=1;
+        else $contact->fonction=$fonction;
+        $retourid=true;
+        $retour=$retour;
+        $joinId=$idJoin;
+        return view("pages.contact.create",compact('contact','vente','retour',"retourid",'joinId'));
+    }
+    public function createWithVente(Request $resuest,$vente_id,$nom,$tel="")
     {
         $vente=Vente::findOrFail($vente_id);
         $contact=new Contact;
@@ -236,7 +257,10 @@ class ContactController extends Controller
         $tele=new Telephone;
         $tele->numero=$tel;
         $contact->telephones->add($tele);
-        return view("pages.contact.create",compact('contact','vente'));
+        $retour='vente';
+        $retourId=false;
+        $joinId=0;
+        return view("pages.contact.create",compact('contact','vente','retour','retourId','joinId'));
     }
 
     public function saveContactPrix($request,$contact){
@@ -283,6 +307,11 @@ class ContactController extends Controller
 
         $validator = Validator::make($request->all()+['id'=>$id], $validationArray);
         $validator->after(function($validator)use($request){
+            if($request->has("tel1") && $request->has('tel2')){
+                if(!empty($request->tel1['numero']) && (trim($request->tel1['numero']) == trim($request->tel2['numero']) )){
+                    $validator->errors()->add('tel1','les deux numeros tel_1 et tel2 doivent être differents');
+                }
+            }
             if($request->has('vente_id')){
                 if(!Vente::where('id',$request->vente_id)->exists()){
                     $validator->errors()->add('vente','la vente n existe pas, peut etre elle est suprimer pas un autre utilisateur');
@@ -348,27 +377,23 @@ class ContactController extends Controller
     }
 
     public function saveTelephone(Request $request,$attribute,$idContact){
-        $telephone=new Telephone;
-        $att=$attribute.'_id';
-        if($request->has($att)){
-            $telephone=Telephone::where('id',$request->$att)->first();
+
+
+        if(isset($request->$attribute['id']) && !empty($request->$attribute['id'])){
+            $telephone=Telephone::where('id',$request->$attribute['id'])->first();
+            $op='update';
+        }
+        else{
+            $telephone=new Telephone;
+            $op='save';
         }
         $telephone->contact_id=$idContact;
 
 
-        $att=$attribute.'_indicatif';
-        $telephone->indicatif=$request->$att;
-        $att=$attribute.'_numero';
-        $telephone->numero=$request->$att;
+        $telephone->indicatif=$request->$attribute['indicatif'];
+        $telephone->numero=$request->$attribute['numero'];
 
-        $att=$attribute.'_id';
-        if($request->has($att)){
-
-            $telephone->update();
-        }
-        else{
-            $telephone->save();
-        }
+        $telephone->$op();
 
 
         return $telephone;
@@ -379,16 +404,15 @@ class ContactController extends Controller
     public function memeValidationSave(){
 
         $tab=[
-
-            "tel1"=>[new TelephoneRule()],
-            "tel2"=>[new TelephoneRule()],
+            "tel1"=>[new TelephoneRule],
+            "tel2"=>[new TelephoneRule],
             "photo"=>"image",
             "ncni_photo_2"=>"image",
             "ncni_photo_1"=>"image",
             "fonction"=>"max:255",
             "adresse"=>"max:150",
             'ncni'=>'max:50',
-            'client_fournisseur'=> 'array',
+           // 'client_fournisseur'=> 'array',
             'bois'=>'array',
             'bois.*'=>'exists:bois,id',
             'prix_vente'=>'array',
@@ -424,7 +448,11 @@ class ContactController extends Controller
     {
         $contact= Contact::where('id',$id)->first();
         $vente=null;
-        return view("pages.contact.create",compact('contact','vente'));
+        $retourid=true;
+        $retour='';
+        $joinId=0;
+
+        return view("pages.contact.create",compact('contact','vente','retour','retourid','joinId'));
     }
 
     /**

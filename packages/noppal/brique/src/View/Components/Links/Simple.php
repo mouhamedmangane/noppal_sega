@@ -6,18 +6,19 @@ use Illuminate\View\Component;
 
 class Simple extends Component
 {
-    public $url,$text,$class,$src;
+    public $url,$text,$class,$src,$icon;
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($url,$text,$class='',$src='')
+    public function __construct($url,$text,$class='',$src='',$icon='')
     {
         $this->url=$url;
         $this->text=$text;
         $this->class=$class;
         $this->src=$src;
+        $this->icon=$icon;
     }
 
     /**

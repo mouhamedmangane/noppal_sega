@@ -13,6 +13,11 @@
             <x-npl::icon.simple name="grid_view" taille="40" />
         </x-slot>
         <x-npl::breadcumb.bar style="font-size: 18px;" class="py-0">
+            @if($achat->reglement)
+            <x-npl::breadcumb.item  class="lien-sp">
+                <a href="{{ url('reglement/'.$achat->reglement->id) }}">RS-{{$achat->reglement->id}}</a>
+            </x-npl::breadcumb.item>
+            @endif
             <x-npl::breadcumb.item  class="lien-sp">
                 <a href="{{ url('/achat/'.$achat->id) }}">{{$achat->numero()}}</a>
             </x-npl::breadcumb.item>

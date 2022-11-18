@@ -25,7 +25,7 @@
                                     <span>
                                         {{ ucfirst( $vente->nom)." / ".$vente->telephone }}
                                     </span>
-                                    <a href="{{url('contact/createwith/'.$vente->id.'/'.$vente->nom.'/'.$vente->telephone)}}" class="btn btn-sm btn btn-outline-primary rounded-circle">
+                                    <a href="{{url('contact/createtovente/'.$vente->id.'/'.$vente->nom.'/'.$vente->telephone)}}" class="btn btn-sm btn btn-outline-primary rounded-circle">
                                         <i class="material-icons md-14" >add</i>
                                     </a>
                                 @endif
@@ -55,12 +55,14 @@
 
       <x-npl::navs-tabs.pane id="paiement" >
          <div class="row d-flex justify-content-center ">
-               <div class="col-md-6 col-sm-12 " >
+               <div class="col-md-6 col-sm-12  " >
+                        <div class="shadow border px-2">
+                                <x-npl::data-table.simple class="" name="myDataTable2"
+                                    :url="url('vente/paiement/data/'.$vente->id)"
+                                    :columns="$titlePayement()" dom="t"
+                                    scrollY='100%'/>
+                        </div>
 
-                        <x-npl::data-table.simple class="" name="myDataTable2"
-                            :url="url('vente/paiement/data/'.$vente->id)"
-                            :columns="$titlePayement()" dom="t"
-                            scrollY='100%'/>
 
                </div>
                <div class="col-md-6 col-sm-12">
@@ -124,38 +126,42 @@
                 $('#modal_new_ligne_paiement').modal('show');
 
             });
+            $('.btn-delete-paiement').off();
             $('.btn-delete-paiement').on('click',function(){
-                let id=$(this).data('id');
-                $.ajaxSetup({
-                    headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    url: "{{ url('vente/paiement/delete') }}",
-                    type: "delete",
-                    data:{
-                        'id':id
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        if(response.status){
-                            $.fn.nplAlertBarShow('#addVenteAlert',response.message,"alert alert-success","alert alert-danger",1);
-                            let dataTable=$("#myDataTable2").DataTable();
-                            dataTable.ajax.reload();
-                            updateInfo(response.montant_restant,response.etat);
+                if(confirm("Êtes vous sûre de supprimer le paiement")){
+                    let id=$(this).data('id');
+                    $.ajaxSetup({
+                        headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         }
-                        else{
-                            $.fn.nplAlertBarShow('#addVenteAlert',response.message,"alert alert-danger","alert alert-success",0);
-                        }
-                    },
-                    error: async function (err){
-                        $.fn.nplAlertBarShow('#addVenteAlert',response.message,"alert alert-danger","alert alert-success",1);
+                    });
+                    $.ajax({
+                        url: "{{ url('vente/paiement/delete') }}",
+                        type: "delete",
+                        data:{
+                            'id':id
+                        },
+                        dataType: "json",
+                        success: function (response) {
+                            if(response.status){
+                                $.fn.nplAlertBarShow('#addVenteAlert',response.message,"alert alert-success","alert alert-danger",1);
+                                let dataTable=$("#myDataTable2").DataTable();
+                                dataTable.ajax.reload();
+                                updateInfo(response.montant_restant,response.etat);
+                            }
+                            else{
+                                $.fn.nplAlertBarShow('#addVenteAlert',response.message,"alert alert-danger","alert alert-success",0);
+                            }
+                        },
+                        error: async function (err){
+                            $.fn.nplAlertBarShow('#addVenteAlert',response.message,"alert alert-danger","alert alert-success",1);
 
-                    }
-                });
+                        }
+                    });
+                }
 
             });
+
         })
     })
 

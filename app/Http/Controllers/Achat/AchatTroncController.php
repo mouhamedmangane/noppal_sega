@@ -19,6 +19,13 @@ use Npl\Brique\Util\HydrateFacade;
 
 class AchatTroncController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth');
+        $this->middleware('droit:tronc,c')->only('store');
+        $this->middleware('droit:tronc,d')->only('destroy');
+
+    }
+
     public function getData($id){
         $troncs=BoisProduit::where("achat_id",$id)->orderBy('created_at','desc')->get();
         $total_tronc=$troncs->count();

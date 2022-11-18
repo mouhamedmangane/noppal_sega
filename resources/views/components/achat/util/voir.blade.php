@@ -6,7 +6,7 @@
     <x-npl::navs-tabs.item text="Information General" idPane="general"  id="general-tab"  active="true" classLink="ml-3" />
     <x-npl::navs-tabs.item text="Troncs" idPane="troncs" id="achat-tab" :badge="$achat->nbrTronc()" badgeType="badge-primary" />
     <x-npl::navs-tabs.item text="Paiement" idPane="paiement" id="paiement-tab" :badge="($achat->nbrPaiement())? $achat->nbrPaiement():'0 '" badgeType="badge-success"/>
-    <x-npl::navs-tabs.item text="Frais" idPane="frais" id="frais-tab" :badge="($achat->nbrFrais())?$achat->nbrFrais():'0 '" badgeType="badge-warning"/>
+    {{-- <x-npl::navs-tabs.item text="Frais" idPane="frais" id="frais-tab" :badge="($achat->nbrFrais())?$achat->nbrFrais():'0 '" badgeType="badge-warning"/> --}}
     <x-npl::navs-tabs.item text="Details" idPane="details" id="detail-tab"  />
 </x-npl::navs-tabs.nav>
 @endsection
@@ -100,7 +100,7 @@
 
       </x-npl::navs-tabs.pane>
 
-      <x-npl::navs-tabs.pane id="frais" >
+      {{-- <x-npl::navs-tabs.pane id="frais" >
         <div class="row d-flex ">
             <div class="col-md-8 col-sm-12 " >
                      <x-npl::data-table.simple class="" name="myDataTable3"
@@ -109,7 +109,7 @@
                          scrollY='100%'/>
             </div>
         </div>
-      </x-npl::navs-tabs.pane>
+      </x-npl::navs-tabs.pane> --}}
 
       <x-npl::navs-tabs.pane id="details"  >
           <div class="row">

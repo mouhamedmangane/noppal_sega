@@ -1,8 +1,11 @@
 <?php
 
 use App\Http\Controllers\Api\ContactControllerApi;
+use App\Http\Controllers\Api\Reglement\ReglementController;
 use App\Http\Controllers\Api\TroncControllerApi;
 use App\Http\Controllers\Api\VenteControllerApi;
+use App\Http\Controllers\DeleteContactDoublonController;
+use App\Http\Controllers\transaction\TransactionController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -56,5 +59,18 @@ Route::get('bonjour',function(Request $reqsuest){
     return 'bonjour';
 });
 
+//ajouter par ass
 
+Route::get('/tester',[DeleteContactDoublonController::class,'finish']);
+Route::get('/verrifierDoublon',[DeleteContactDoublonController::class,'getTelephones']);
+Route::get('/supp',[DeleteContactDoublonController::class,'getTelephones']);
+Route::get('/listerVenteDoublon',[DeleteContactDoublonController::class,'listerLeurVente']);
+Route::get('transaction/saveLigne',[TransactionController::class,'saveLigneVenteTransaction']);
+
+
+
+
+
+// Reglement
+Route::get('reglement/init',[ReglementController::class,'initReglement']);
 

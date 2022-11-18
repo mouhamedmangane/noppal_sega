@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\ModelHaut\Tronc;
 use App\ModelHaut\VenteHaut;
+use App\Models\Caisse;
 use App\Models\Depense;
 use App\Models\LignePaiement;
 use App\Models\LigneVente;
+use App\Models\Transaction;
 use Carbon\Carbon;
 
 use App\Models\Vente;
@@ -72,6 +74,7 @@ class HomeController extends Controller
 
         $donnees['paye_non_livre']=number_format($this->totalPayeNonLivre($date),0,',',' ');
         $donnees['paye_non_livre_jour']=number_format($this->totalPayeNonLivreJour($date),0,',',' ');
+        $donnees['etat_caisse']=number_format($this->etat_caisse(),0,',',' ');
 
 
         $donnees['dette']=number_format($this->totalDette(),0,',',' ').' / '.$donnees['nbre_accompte'];
@@ -130,22 +133,26 @@ class HomeController extends Controller
                             ->whereDate('ligne_paiements.created_at',$date)
                             ->sum('somme');
     }
-
+    // total entrée journée
     public function totalEncaisseJour($date){
-        return LignePaiement::whereDate('created_at',$date)->sum('somme');
+        return Transaction::where('somme','>',0)->whereDate('created_at',$date)->sum('somme');
     }
 
-
+    //total sortie jour
     public function totalDepenseJour($date){
-        return Depense::whereDate('created_at',$date)->sum('somme');
+        return -1* Depense::whereDate('created_at',$date)->sum('somme') +
+                         Transaction::where('somme','<',0)->whereDate('created_at',$date)->sum('somme');
     }
 
 
-
+    //total sortie mois
     public function totalDepenseMois($month,$year){
-        return Depense::whereMonth("created_at",$month)
+        return -Depense::whereMonth("created_at",$month)
                       ->whereYear("created_at",$year)
                       ->sum('somme');
+                +Transaction::where('somme','<',0)->
+                whereMonth("created_at",$month)->
+                whereYear('created_at',$year)->sum('somme');
     }
 
 
@@ -172,7 +179,8 @@ class HomeController extends Controller
     }
 
     public function totalDepenseAnnee($year){
-        return Depense::whereYear('created_at',$year)->sum('somme');
+        return -1*Depense::whereYear('created_at',$year)->sum('somme')
+                +Transaction::where('somme','<',0)->whereYear('created_at',$year)->sum('somme');
     }
 
 
@@ -189,13 +197,10 @@ class HomeController extends Controller
 
 
     public function encaissement_jour($date){
-        $lignes=LignePaiement::whereDate('created_at',$date)->get();
+        $lignes=Transaction::whereDate('created_at',$date)->where('somme','>','0')->get();
         return  DataTables::of($lignes)
                 ->addColumn("nom",function($ligne){
-                    $vente=$ligne->vente;
-                    if($vente->contact_id>0)
-                        return $vente->client->nom;
-                    return $vente->nom;
+                    return $ligne->description;
                 })
                 ->addColumn('somme_f',function($ligne){
                     return number_format($ligne->somme,'0',',',' ')
@@ -206,27 +211,27 @@ class HomeController extends Controller
                 ->rawColumns(['nom','somme_f',])
                 ->toJson();
     }
+    public function etat_caisse(){
+        // Caisse::latest()->first();
+        $caisse= DB::table('caisses')->orderBy('created_at', 'desc')->first();
+        $montant_transaction=Transaction::where('created_at','>=',$caisse->created_at)->sum('somme');
 
+        return $caisse->montant + $montant_transaction;
+        
+    }
     public function depense_jour($date){
-        $depenses=Depense::whereDate('created_at',$date)->get();
-        return  DataTables::of($depenses)
-                ->addColumn('somme_f',function($depense){
-                    return number_format($depense->somme,'0',',',' ')
-                .view('npl::components.bagde.badge')
-                    ->with('text','FCFA')
-                    ->with('class','badge-success');;
+        $transactions=Transaction::whereDate('created_at',$date)->where('somme','<','0')->get();
+        return  DataTables::of($transactions)
+                 ->addColumn('somme_f',function($transaction){
+                    $badge= ($transaction->somme>0)?"badge-success":"badge-danger";
+                    return view('npl::components.bagde.badge')
+                    ->with('text',number_format($transaction->somme,0,","," ")."FCFA")                   
+                    ->with('class',$badge);
                 })
-                ->addColumn("description_f",function($depense){
-                    //dd($depense->ligneAchatP()->dd());
-                    if($depense->ligneAchatP){
-                        return 'Achat N°'.view('npl::components.links.simple')
-                        ->with('url',url("achat/".$depense->ligneAchatP->achat_id))
-                        ->with('text',$depense->ligneAchatP->achat->fournisseur->nom.' - AS- '.$depense->ligneAchatP->achat_id)
-                        ->with('class','lien-sp');
-                    }
-                    else{
-                        return $depense->description;
-                    }
+                ->addColumn("description_f",function($transaction){
+                    
+                        return $transaction->description;
+                    
 
                 })
                 ->rawColumns(['somme_f','description_f'])

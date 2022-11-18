@@ -1,9 +1,9 @@
 <div class="dropdown ddw-cacha" id="{{ $id }}" >
-    <button class="btn btn-sm d-flex align-items-center  mr-3 dropdown-toggle" type="button"  data-toggle="dropdown">
+    <button class="btn-tb-down btn-radio btn btn-sm d-flex align-items-center  mr-3" type="button"  data-toggle="dropdown">
         <i class="material-icons-outlined " style="font-size:16px;">{{ $attributes['icon'] }}</i>
         <span class="ml-1"> {{ $label }}</span>    
     </button>
-    <div class="dropdown-menu ct-cacha " style="width: 180px;" >
+    <div class="rounded border py-2 px-1 ct-cacha bg-white facile cacher " style="width: 180px;position:fixed;z-index:9999;" >
       
         <x-npl::input.radios 
                                 :defaultSelected="$attributes['defaultSelected']"

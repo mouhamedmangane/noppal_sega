@@ -5,12 +5,14 @@
         class="ly-list-table table-fixed"
         scrollY="100"
         name="myDataTable" url="{{ url('/achat/data/') }}" :columns="$getTitle()"
-        idDivPaginate="bass-right" idDivInfo="bas-left" selectName="myDataTableSelect" searchId='mySearch'
+        idDivPaginate="bass-right" idDivInfo="bas-left"
+        {{-- selectName="myDataTableSelect"  --}}
+        searchId='mySearch'
         pageLength="25"
         groupByEnable="true"
         groupBy=""
-        selectName="achat_select"
-        selectColWidth="100px"
+        {{-- selectName="achat_select"
+        selectColWidth="100px" --}}
         pagingType="full"
         :actions="[
             ['op'=>'Suppression','id'=>'supprimer_achat_tb',

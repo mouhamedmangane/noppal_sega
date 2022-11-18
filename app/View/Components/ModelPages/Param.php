@@ -2,6 +2,7 @@
 
 namespace App\View\Components\ModelPages;
 
+use App\Util\Access;
 use Illuminate\View\Component;
 use Npl\Brique\ViewModel\Navs\NavModelFactory;
 
@@ -30,19 +31,20 @@ class Param extends Component
         ->addNavBlocModel(
             NavModelFactory::navBlocModel()
             ->addNavItemModel("Vente","vente","shopping_cart")
+            ->addNavItemModel("Reglement","reglement","shopping_basket")
+            ->addNavItemModel("Transaction","transaction","shopping_basket")
             ->addNavItemModel("Achat","achat","shopping_basket")
             ->addNavItemModel("Depense","depense","straighten")
         )
         ->addNavBlocModel(
             NavModelFactory::navBlocModel()
 
-            ->addNavItemModel("l'Entreprise","param-compte/entreprise","home_work")
-            ->addNavItemModel("Bois","bois","toll")
-            ->addNavItemModel("Type Depense","param-compte/type_depense","toll")
-            ->addNavItemModel("Epaisseur Planche","epaisseur_planche","height")
-            ->addNavItemModel("Role","param-compte/roles","gavel")
-            ->addNavItemModel("Utilisateur","param-compte/users","group")
-            ->access('bois',['c'])
+            ->addNavItemModel("l'Entreprise","param-compte/entreprise","home_work",false,Access::canAccess('entreprise',['r']))
+            ->addNavItemModel("Bois","bois","toll",false,Access::canAccess('bois',['r']))
+            ->addNavItemModel("Type Depense","param-compte/type_depense","toll",false,Access::canAccess('type_depense',['r']))
+            ->addNavItemModel("Epaisseur Planche","epaisseur_planche","height",false,Access::canAccess('epaisseur_planche',['r']))
+            ->addNavItemModel("Role","param-compte/roles","gavel",false,Access::canAccess('role',['r']))
+            ->addNavItemModel("Utilisateur","param-compte/users","group",false,Access::canAccess('user',['r']))
         )
         ->activer();
 

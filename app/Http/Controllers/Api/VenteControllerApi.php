@@ -3,6 +3,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BoisProduit;
+use App\Models\LignePaiement;
+use App\Models\Transaction;
 use App\Models\Vente;
 use App\Service\VenteService;
 use Illuminate\Http\Request;
@@ -93,4 +95,22 @@ class VenteControllerApi extends Controller{
             ]
         ];
     }
+
+
+    public function traduireVente(){
+        $transactions = Transaction::where('type','like','VS')->where('id','>',2698)->get();
+        foreach($transactions as $transaction){
+            $simple = $transaction->ligne_paiement;
+            $lignePaiment= LignePaiement::find($simple->id);
+            $transaction->description= $lignePaiment->description();
+            $transaction->update();
+        }
+
+        return response()->json([
+            'yes',
+            $transactions->count(),
+
+        ]);
+    }
+
 }

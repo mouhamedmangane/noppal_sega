@@ -18,7 +18,7 @@
         @stack('header')
 
         <link rel="stylesheet" type="text/css" href="{{ URL::asset('dist/css/components.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ URL::asset('dist/css/style.css?v=1') }}">
+        <link rel="stylesheet" type="text/css" href="{{ URL::asset('dist/css/style.css') }}">
         {{-- <link rel="stylesheet" href="{{ URL::asset('css/table-fixed.css') }}"> --}}
 
         <style>

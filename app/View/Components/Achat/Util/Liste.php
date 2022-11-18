@@ -18,8 +18,8 @@ class Liste extends Component
 
     public function getTitle(){
         return [
-            (object)['name'=>'N°','propertyName'=>'numeroAchat','classStyle'=>""],
-            (object)['name'=>'Etat','propertyName'=>'ouvert_f','classStyle'=>""],
+            (object)['name'=>'N°','propertyName'=>'numeroAchat','classStyle'=>" "],
+            (object)['name'=>'Etat','propertyName'=>'ouvert_f','classStyle'=>"text-center"],
             (object)['name'=>'Founisseur','propertyName'=>'fournisseur','classStyle'=>""],
             (object)['name'=>'Poids F(kg)','propertyName'=>'poids_f','classStyle'=>""],
             (object)['name'=>'Somme','propertyName'=>'somme_f','classStyle'=>""],

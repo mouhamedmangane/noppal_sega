@@ -82,7 +82,14 @@ class VenteController extends Controller
     public function create()
     {
         $vente= new Vente;
-        return view('pages.vente.create',compact('vente'));
+        $clientid=0;
+        return view('pages.vente.create',compact('vente','clientid'));
+    }
+    public function createWithClient($id)
+    {
+        $vente= new Vente;
+        $clientid=$id;
+        return view('pages.vente.create',compact('vente','clientid'));
     }
 
     public function store(Request $request){
@@ -93,7 +100,8 @@ class VenteController extends Controller
 
     public function edit(Request $request,$id){
         $vente=Vente::where('id',$id)->first();
-        return view("pages.vente.create",compact('vente'));
+        $clientid=$id;
+        return view("pages.vente.create",compact('vente','clientid'));
     }
 
     public function update(Request $request,$id){
@@ -137,6 +145,8 @@ class VenteController extends Controller
                     );
                 }
             }
+            $ac=Access::canAccess('vente_paye_non_livre',['c']);
+
 
         });
         if($validator->fails()){
@@ -174,6 +184,7 @@ class VenteController extends Controller
                     VenteHaut::updateLigneVentes($vente,$request);
                 }
                 if($request->has('montant')&&  $is_new && $request->montant > 0){
+                    // dd('montant');
                     $this->insererPaiement($vente,$request->montant);
 
                 }
@@ -181,6 +192,15 @@ class VenteController extends Controller
                 VenteHaut::updateEtatVente($vente);
                 VenteHaut::libererJeton($vente);
                 ContactHaut::updateCompte($vente->contact_id);
+
+                if($is_new && $vente->sumRestant()<=0 && !Access::canAccess('vente_paye_non_livre',['c'])){
+                    DB::rollback();
+                    return [
+                        'status'=>false,
+                        'message'=>"Vous n'avez pas l'autorisation de creer un depot",
+                        'id'=>$vente->id
+                    ];
+                }
 
                 DB::commit();
                 return [
@@ -295,10 +315,18 @@ class VenteController extends Controller
             })
             ->addColumn('montant',function($vente){
                 $GLOBALS['somme']=$vente->sumVente();
-                return number_format($vente->sumVente(),0,',',' ')." FCFA" ;
+                return view('npl::components.data-table.child-cell')
+                ->with('classStyle',"dt-col dt-min-col-4")
+                ->with('style','')
+                ->with('slot',number_format($vente->sumVente(),0,',',' ')." FCFA" );
+
             })
             ->addColumn('montantRestant',function($vente){
-                return number_format($vente->sumRestant(),0,',',' ') ." FCFA" ;
+                 return view('npl::components.data-table.child-cell')
+                ->with('classStyle',"dt-col dt-min-col-4")
+                ->with('style','')
+                ->with('slot',number_format($vente->sumRestant(),0,',',' ') ." FCFA" );
+
             })
 
             ->addColumn('etat',function($vente){
@@ -327,10 +355,15 @@ class VenteController extends Controller
                 return view('npl::components.links.simple')
                 ->with('url',url("vente/".$vente->id))
                 ->with('text','VS-'.$vente->id)
-                ->with('class','lien-sp');
+                ->with('class','lien-sp dt-col dt-min-col-3');
             })
             ->addColumn('date',function($vente){
-                return ($vente->created_at)?$vente->created_at->format('d-m-Y'):'non defini';
+                $date=($vente->created_at)?$vente->created_at->format('d-m-Y'):'non defini';
+                return view('npl::components.data-table.child-cell')
+                ->with('classStyle',"dt-col dt-min-col-4")
+                ->with('style','')
+                ->with('slot',$date);
+
             })
             ->addColumn('heure',function($vente){
                 return ($vente->created_at)?$vente->created_at->format('H:i:s'):'non defini';

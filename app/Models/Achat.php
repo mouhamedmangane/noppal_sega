@@ -18,6 +18,10 @@ class Achat extends Model
         return $this->belongsTo("App\Models\Contact",'fournisseur_id','id');
     }
 
+    public function reglement(){
+        return $this->belongsTo(Reglement::class);
+    }
+
     public function troncs(){
         return $this->hasMany('App\Models\BoisProduit');
     }

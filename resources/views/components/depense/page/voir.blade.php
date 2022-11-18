@@ -4,11 +4,11 @@
 
    <x-npl::tool-bar.prev-button id="prev_tb"  url="/depense/"  />
 
-    <x-npl::tool-bar.link id="nouveau_depense_tb" text="Nouveau" icon="add" url="/depense/create" evidence="btn-primary" :canAccess="['depense_bois',['c']]" />
+    {{-- <x-npl::tool-bar.link id="nouveau_depense_tb" text="Nouveau" icon="add" url="/depense/create" evidence="btn-primary" :canAccess="['depense_bois',['c']]" />
     @if($depense->updatable)
         <x-npl::tool-bar.link id="modifier_depense_tb" text="Modifier" icon="edit" :url="url('depense/'.$depense->id.'/edit')" :canAccess="['depense_bois',['u']]" />
         <x-npl::tool-bar.button id="supprimer_depense_tb" text="Supprimer" icon="delete"  disabled="disabled" :canAccess="['depense_bois',['d']]" />
-    @endif
+    @endif --}}
 
 
 </x-npl::tool-bar.bar >

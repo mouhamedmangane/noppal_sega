@@ -53,9 +53,10 @@
     </table>
 
 
-    <div class="dropdown position-absolute reduce-col" style="right: 3px;top:10px;">
+    <div class="dropdown position-absolute reduce-col" style="">
         <a data-toggle="dropdown" href="#">
-            <i class="material-icons">more_vert</i>
+            <i class="material-icons masque-sm">more_vert</i>
+            <i class="material-icons masque-md">expand_more</i>
         </a>
         <div class="dropdown-menu">
             @foreach ($columns as $key => $column )

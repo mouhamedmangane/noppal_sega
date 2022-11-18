@@ -7,7 +7,7 @@ use Illuminate\View\Component;
 
 class Create extends Component
 {
-    public $achat;
+    public $achat,$reglement;
 
     public $fournisseur;
 
@@ -17,9 +17,10 @@ class Create extends Component
      *
      * @return void
      */
-    public function __construct($model)
+    public function __construct($model,$reglement)
     {
         $this->achat = $model;
+        $this->reglement=$reglement;
     }
 
     public function getFournisseur(){

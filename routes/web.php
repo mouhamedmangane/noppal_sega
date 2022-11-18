@@ -18,6 +18,11 @@ use App\Http\Controllers\Achat\AchatTroncController;
 use App\Http\Controllers\Achat\PaiementController as AchatPaiementController;
 use App\Http\Controllers\Depense\DepenseController;
 use App\Http\Controllers\ParamCompte\TypeDepenseController;
+use App\Http\Controllers\Reglement\LigneReglementController;
+use App\Http\Controllers\Reglement\PaiementReglementController;
+use App\Http\Controllers\Reglement\ReglementController;
+use App\Http\Controllers\Reglement\ReglementFournisseurController;
+use App\Http\Controllers\Transaction\TransactionController;
 use Illuminate\Contracts\Validation\Validator as ValidationValidator;
 use Illuminate\Http\Request;
 /*
@@ -107,13 +112,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('contact/desarchiver/{id}',[ContactController::class,'desarchiver']);
     Route::get('contact/archiverMany',[ContactController::class,'archiverMany']);
     Route::get('contact/desarchiverMany',[ContactController::class,'desarchiverMany']);
-    Route::get('contact/createwith/{vente_id}/{nom}/{tel?}',[ContactController::class,'createWith']);
+    Route::get('contact/createwithretour/{retour}/{fonction}/{nom?}/{tel?}',[ContactController::class,'createWith']);
+    Route::get('contact/createwithretourjoin/{idJoin}/info/{retour}/{fonction}/{nom?}/{tel?}',[ContactController::class,'createWithJoin']);
+    Route::get('contact/createtovente/{vente_id}/{nom}/{tel?}',[ContactController::class,'createWithVente']);
     Route::delete('contact/destroyMany',[ContactController::class,'destroyMany']);
     Route::resources(['contact'=>ContactController::class]);
 
     //Vente
     Route::post('vente/save',  [VenteController::class,'store']);
     Route::get('vente/create',[VenteController::class,'create']);
+    Route::get('vente/create/client/{id}',[VenteController::class,'createWithClient']);
     Route::get('vente/data',[VenteController::class,'returnVentes']);
     Route::get('vente/data/{filter}', [VenteController::class,'index']);
     Route::get('vente/print/{id}', [VenteController::class,'print']);
@@ -126,6 +134,22 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('vente/many', [VenteController::class,'destroyMany']);
     Route::get('contact_prix/{id}', [PrixController::class,'getContactPrix']);
     Route::resources(['vente'=>VenteController::class]);
+
+
+    //REglement
+    Route::get('reglement/valider/{id}',[ReglementController::class,'valider']);
+    Route::post('reglement/ligne/paiement',[PaiementReglementController::class,'store']);
+    Route::delete('reglement/ligne/paiement/delete', [PaiementReglementController::class,'destroy']);
+    Route::get('reglement/lignes/data/{id}',[LigneReglementController::class,'getData']);
+    Route::get('reglement/fournisseur/{id}',[ReglementController::class,'redirectLasReglement']);
+    Route::get('reglement/{id}/last_chargement',[ReglementController::class,'lastAchat']);
+    Route::post('reglement/{id}/edit_initial',[ReglementController::class,'editInitial']);
+    Route::get('reglement/fournisseur/{id}/data',[ReglementFournisseurController::class,'getData']);
+    Route::get('reglement/fournisseur/{id}/list',[ReglementFournisseurController::class,'show']);
+    Route::get('reglement/historiquefournisseur/{id}',[ReglementController::class,'redirectLasReglement']);
+    Route::get('reglement/lastchargementfournisseur/{id}',[ReglementController::class,'redirectLasReglement']);
+    Route::get('reglement/data',[ReglementController::class,'getData']);
+    Route::resources(['reglement'=>ReglementController::class]);
 
     //Paiement
     Route::get('vente/paiement/data/{id}', [PaiementController::class,'data']);
@@ -140,11 +164,13 @@ Route::middleware(['auth'])->group(function () {
 
   // Route::get('venteProduit/categorie/{id}',[VenteController::class,'getProducts']);
     Route::post('achat/save',  [AchatController::class,'store']);
-
+    Route::get('achat/createwithreglement/{idReglement}/chauffeur/{id}',[AchatController::class,'createWithChauffeur']);
+    Route::get('achat/create/reglement/{idReglement}',  [AchatController::class,'create']);
+    Route::get('achat/store/{id}/reglement/{idReglement}',  [AchatController::class,'edit']);
     Route::get('achat/depense/data/{type}/{id}',  [AchatPaiementController::class,'data']);
-    Route::get('achat/depense/data/{type}/{id}',  [AchatPaiementController::class,'data']);
-    Route::post('achat/paiement',  [AchatPaiementController::class,'store']);
-    Route::delete('achat/paiement/delete', [AchatPaiementController::class,'destroy']);
+   Route::get('achat/depense/data/{type}/{id}',  [AchatPaiementController::class,'data']);
+    //Route::post('achat/paiement',  [AchatPaiementController::class,'store']);
+    //Route::delete('achat/paiement/delete', [AchatPaiementController::class,'destroy']);
 
     Route::get('achat/tronc/{id}',  [AchatTroncController::class,'index']);
     Route::get('achat/tronc_data/{id}/',  [AchatTroncController::class,'getData']);
@@ -169,12 +195,18 @@ Route::middleware(['auth'])->group(function () {
     //tronc
     Route::get('depense/data',[DepenseController::class,'getData']);
     Route::get('depense/data/{filter}',[DepenseController::class,'getData']);
-    Route::get('depense/archiver/{id}',[DepenseController::class,'archiver']);
-    Route::get('depense/desarchiver/{id}',[DepenseController::class,'desarchiver']);
-    Route::get('depense/archiverMany',[DepenseController::class,'archiverMany']);
-    Route::get('depense/desarchiverMany',[DepenseController::class,'desarchiverMany']);
-    Route::delete('depense/destroyMany',[DepenseController::class,'destroyMany']);
+    // Route::get('depense/archiver/{id}',[DepenseController::class,'archiver']);
+    // Route::get('depense/desarchiver/{id}',[DepenseController::class,'desarchiver']);
+    // Route::get('depense/archiverMany',[DepenseController::class,'archiverMany']);
+    // Route::get('depense/desarchiverMany',[DepenseController::class,'desarchiverMany']);
+    // Route::delete('depense/destroyMany',[DepenseController::class,'destroyMany']);
     Route::resources(['depense'=> DepenseController::class]);
+
+     //transaction
+     Route::get('transaction/data',[TransactionController::class,'getData']);
+     Route::get('transaction/data/{filter}',[TransactionController::class,'getData']);
+     Route::get('transaction/saveLigne',[TransactionController::class,'saveLigneVenteTransaction']);
+     Route::resources(['transaction'=> TransactionController::class]);
 
 });
 
@@ -213,6 +245,9 @@ Route::middleware([])->group(function () {
     Route::get('param-compte/type_depense/desarchiverMany',[TypeDepenseController::class,'desarchiverMany']);
     Route::delete('param-compte/type_depense',[TypeDepenseController::class,'destroyMany']);
     Route::resources(['param-compte/type_depense'=>TypeDepenseController::class]);
+
+
+
 
 });
 

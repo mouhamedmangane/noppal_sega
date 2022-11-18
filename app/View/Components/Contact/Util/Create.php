@@ -37,10 +37,10 @@ class Create extends Component
                 $i++;
             }
         }
-        if($contact->id){
+        //if($contact->id){
             $this->client_fournisseur[0]=(boolean) $contact->is_client;
             $this->client_fournisseur[1]=(boolean) $contact->is_fournisseur;
-        }
+        //}
         if($vente){
             $this->client_fournisseur[0]=true;
 

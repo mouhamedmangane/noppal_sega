@@ -8,6 +8,7 @@ class Create extends Component
 {
     public $contact;
     public $vente;
+    public $retour,$retourid,$joinId;
     public $couleur_info='success',
            $status_info="Actif",
            $compte_info='0 FCFA',
@@ -18,10 +19,13 @@ class Create extends Component
      *
      * @return void
      */
-    public function __construct($contact,$vente=null)
+    public function __construct($contact,$vente=null,$retour,$retourid,$joinId)
     {
+        $this->joinId=$joinId;
         $this->contact=$contact;
         $this->vente=$vente;
+        $this->retour=$retour;
+        $this->retourid=$retourid;
         if($contact->archiver==1){
             $this->couleur='danger';
             $this->status="Archivé";

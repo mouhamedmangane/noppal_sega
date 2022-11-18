@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Achat;
 
 use App\Http\Controllers\Controller;
 use App\Models\Achat;
+use App\Models\Reglement;
 use Illuminate\Http\Request;
+use Npl\Brique\Http\ResponseAjax\DeleteRow;
 use Npl\Brique\Rules\NOp;
 use Npl\Brique\Rules\NSelect;
 use Npl\Brique\Rules\PositiveRule;
@@ -15,6 +17,14 @@ use Validator,DB,DataTables;
 
 class AchatController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth');
+        $this->middleware('droit:reglement_achat,c')->only('store','create');
+        $this->middleware('droit:reglement_achat,d')->only('destroy');
+        $this->middleware('droit:reglement_achat,r')->only('destroy');
+        $this->middleware('droit:reglement_achat,u')->only('edit','update');
+
+    }
 
 
     public function getData(Request $request,$filter=null,$id_fournisseur=null){
@@ -125,16 +135,27 @@ class AchatController extends Controller
                 return "Aucun";
             })
             ->addColumn('chauffeur',function($achat){
+                $chaine='aucun';
                 if($achat->chauffeur_id){
-                    return $achat->chauffeur->nameAndPhone();
+                    $chaine =$achat->chauffeur->nameAndPhone();
                 }
-                return "Aucun";
+                return view('npl::components.data-table.child-cell')
+                ->with('classStyle',"dt-col dt-min-col-4")
+                ->with('style','')
+                ->with('slot',$chaine);
             })
             ->addColumn('somme_f',function($achat){
-                return number_format($achat->somme,0,',',' ')." FCFA" ;
+                return view('npl::components.data-table.child-cell')
+                    ->with('classStyle',"dt-col dt-min-col-4")
+                    ->with('style','')
+                    ->with('slot',number_format($achat->somme,0,',',' ')." FCFA" );
+
             })
             ->addColumn('poids_f',function($achat){
-                return number_format($achat->poids,0,',',' ') ." KG" ;
+                return view('npl::components.data-table.child-cell')
+                    ->with('classStyle',"dt-col dt-min-col-4")
+                    ->with('style','')
+                    ->with('slot',number_format($achat->poids,0,',',' ') ." KG" );
             })
 
             ->addColumn('ouvert_f',function($achat){
@@ -142,7 +163,7 @@ class AchatController extends Controller
                 if($achat->isComplete()){
                     $html.=view('npl::components.bagde.badge')
                     ->with('text',"complete")
-                    ->with('class','badge-success');
+                    ->with('class','badge-success dt-col dt-min-col-2');
                 }
                 else if(!$achat->somme >0 && $achat->restant()<0){
                     $html.=view('npl::components.bagde.badge')
@@ -161,10 +182,14 @@ class AchatController extends Controller
                 return view('npl::components.links.simple')
                 ->with('url',url("achat/".$achat->id))
                 ->with('text','AS-'.$achat->id)
-                ->with('class','lien-sp');
+                ->with('class','lien-sp dt-col dt-min-col-2 ');
             })
             ->addColumn('date',function($achat){
-                return ($achat->created_at)?$achat->created_at->format('d-m-Y'):'non defini';
+                $date=($achat->created_at)?$achat->created_at->format('d-m-Y'):'non defini';
+                return view('npl::components.data-table.child-cell')
+                    ->with('classStyle',"dt-col dt-min-col-3")
+                    ->with('style','')
+                    ->with('slot',$date );
             })
             ->addColumn('heure',function($achat){
                 return ($achat->created_at)?$achat->created_at->format('H:i:s'):'non defini';
@@ -227,18 +252,35 @@ class AchatController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create(Request $request,$idReglement=0)
     {
+        if($idReglement==0){
+            return redirect('404');
+        }
+        $reglement=($idReglement)?Reglement::findOrFail($idReglement):new Reglement;
         if($request->session()->has('achat_form')){
             $achat=$request->session()->get("achat_form");
         }
         else{
             $achat=new Achat();
         }
-
-        return view("pages.achat.create",compact('achat'));
+        return view("pages.achat.create",compact('achat','reglement'));
     }
 
+    public function createWithChauffeur(Request $request,$idReglement,$id){
+        if($idReglement==0){
+            return redirect('404');
+        }
+        $reglement=($idReglement)?Reglement::findOrFail($idReglement):new Reglement;
+        if($request->session()->has('achat_form')){
+            $achat=$request->session()->get("achat_form");
+        }
+        else{
+            $achat=new Achat();
+        }
+        $achat->chauffeur_id=$id;
+        return view("pages.achat.create",compact('achat','reglement'));
+    }
 
     public function save(Request $request,$op,$validationArray,$hydrateArray,$id){
         $validator=Validator::make($request->all(),$validationArray);
@@ -262,6 +304,9 @@ class AchatController extends Controller
                 }
                 else{
                     $achat->somme_detail=0;
+                }
+                if($request->has('reglement_id')){
+                    $achat->reglement_id=$request->reglement_id;
                 }
                 DoneByUser::inject($achat);
                 $achat->$op();
@@ -331,7 +376,14 @@ class AchatController extends Controller
     public function edit($id)
     {
         $achat=Achat::findOrFail($id);
-        return view('pages.achat.create',compact('achat'));
+        $reglement=$achat->reglement;
+        if(!$reglement){
+            $reglement=new Reglement;
+        }
+        elseif($reglement->etat){
+            return redirect('404');
+        }
+        return view('pages.achat.create',compact('achat','reglement'));
 
     }
 
@@ -367,8 +419,29 @@ class AchatController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request,$id)
     {
-        //
+
+        $validator=Validator::make($request->all(),
+        [
+            'id'=>['numeric','exists:App\Models\Achat,id'],
+        ]);
+
+        if($validator->fails()){
+            return response()->json(Validation::validate($validator));
+        }
+        else{
+            $achat=Achat::where('id',$id)->first();
+            $reglement=$achat->reglement;
+            $res=DeleteRow::one('achats',$achat->id);
+            if($reglement){
+                $res['last']=$reglement->total();
+                $res['etat']=$reglement->etat;
+                $res['somme']=$reglement->totalSomme();
+            }
+            $res['message']="suppression reussi";
+            $res['status']=true;
+            return response()->json($res);
+        }
     }
 }

@@ -26,12 +26,12 @@
             $("#montant_restant_info").html(montant);
             $("#etat_vente_info").html(etat);
             if(etat=="commande"){
-                $("#etat_vente_info").css('color','var(--danger);')
+                $("#etat_vente_info").css('color','var(--red);')
             }else if(etat=="accompte"){
-                $("#etat_vente_info").css('color','var(--warning);')
+                $("#etat_vente_info").css('color','var(--yellow);')
             }
             else if(etat=="complete"){
-                $("#etat_vente_info").css('color','var(--success);')
+                $("#etat_vente_info").css('color','var(--green);')
             }
 
         }

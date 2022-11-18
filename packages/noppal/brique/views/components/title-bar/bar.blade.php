@@ -1,7 +1,7 @@
 <div class="title-bar d-flex align-items-center w-100 justify-content-between pl-3 mt-1 my-sm-0 flex-wrap-sm" style="" id="bloc-titre-page">
     <div class="d-flex align-items-center my-2 n-col-sm-12 masque-sm" id="titre_page" style="">
         <div  class="bg-primary text-white rounded-circle border  text-align center d-flex align-items-center justify-content-center masque-sm" 
-        style="width: 35px; height: 35px;@if ($attributes['img'])border-color:black!important;@endif">
+        style="min-width: 35px;height: 35px;max-width: 35px; max-height: 35px;@if ($attributes['img'])border-color:black!important;@endif">
             {{ $image }}
         </div>
         {{ $slot }}
